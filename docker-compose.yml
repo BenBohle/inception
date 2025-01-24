@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  nginx:
+    build:
+      context: ./Dockerfiles/nginx
+    volumes:
+      - ./requirements/nginx/conf:/etc/nginx/conf.d
+      - ./requirements/nginx/cert:/etc/ssl/certs
+    ports:
+      - "80:80"
+    networks:
+      - wordpress_net
+    depends_on:
+      - wordpress
+    restart: always
+
+  wordpress:
+    build:
+      context: ./Dockerfiles/wordpress
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_NAME: ${WP_DB_NAME}
+      WORDPRESS_DB_USER: ${WP_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - wordpress_net
+    depends_on:
+      - mariadb
+    restart: always
+
+  mariadb:
+    build:
+      context: ./Dockerfiles/mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${WP_DB_NAME}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - wordpress_net
+    restart: always
+
+volumes:
+  wordpress_data:
+  mariadb_data:
+
+networks:
+  wordpress_net:
+    driver: bridge
