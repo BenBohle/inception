@@ -1,22 +1,30 @@
-FROM php:7.4-fpm-alpine
+FROM debian:bullseye
 
-# Installiere bash und curl
-RUN apk add --no-cache bash curl
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    php-fpm \
+    php-mysql \
+    curl \
+    tar \
+    && apt-get clean
 
-# Lade und entpacke WordPress
+# Create the necessary directories
+RUN mkdir -p /var/www/html /run/php
+
+# Download and extract WordPress
 RUN curl -o /tmp/latest.tar.gz https://wordpress.org/latest.tar.gz \
     && tar -xvzf /tmp/latest.tar.gz -C /var/www/html --strip-components=1 \
     && chown -R www-data:www-data /var/www/html \
     && rm /tmp/latest.tar.gz
 
-# Setze Arbeitsverzeichnis
+# Set working directory
 WORKDIR /var/www/html
 
-# Kopiere PHP-Konfiguration
-COPY conf/php.ini /usr/local/etc/php/
+# Copy PHP configuration
+COPY conf/php.ini /etc/php/7.4/fpm/php.ini
 
-# Exponiere Port 9000 (PHP-FPM)
+# Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
-# Starte PHP-FPM
-CMD ["php-fpm"]
+# Start PHP-FPM
+CMD ["php-fpm7.4", "-F"]

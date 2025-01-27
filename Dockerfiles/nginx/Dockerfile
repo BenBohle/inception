@@ -8,7 +8,6 @@ COPY conf/wordpress.conf etc/nginx/conf.d/default.conf
 # COPY conf/cert.pem /etc/ssl/certs/cert.pem
 # COPY conf/key.pem /etc/ssl/private/key.pem
 
-# Exponiere Port 443 für HTTPS
 EXPOSE 80
 
 # Start NGINX
