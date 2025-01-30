@@ -1,13 +1,19 @@
-# Basis-Image: Alpine mit NGINX
-FROM nginx:alpine
+FROM debian:bullseye
+
+# Installiere NGINX und andere notwendige Pakete
+RUN apt-get update && apt-get install -y \
+    nginx \
+    && apt-get clean
 
 # Kopiere die NGINX-Konfiguration
-COPY conf/wordpress.conf etc/nginx/conf.d/default.conf
+RUN rm /etc/nginx/sites-enabled/default
+COPY conf/wordpress.conf /etc/nginx/conf.d/
 
-# Kopiere SSL-Zertifikate
+# Kopiere SSL-Zertifikate (optional)
 # COPY conf/cert.pem /etc/ssl/certs/cert.pem
 # COPY conf/key.pem /etc/ssl/private/key.pem
 
+# Exponiere den Standardport für NGINX
 EXPOSE 80
 
 # Start NGINX

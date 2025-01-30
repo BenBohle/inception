@@ -6,6 +6,9 @@ DOCKER_COMPOSE = docker-compose
 build:
 	$(DOCKER_COMPOSE) build
 
+build-nc:
+	$(DOCKER_COMPOSE) build --no-cache
+
 up:
 	$(DOCKER_COMPOSE) up -d
 

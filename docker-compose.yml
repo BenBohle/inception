@@ -5,7 +5,8 @@ services:
     build:
       context: ./Dockerfiles/nginx
     volumes:
-      - ./requirements/nginx/conf:/etc/nginx/conf.d
+        - wordpress_data:/var/www/html
+    #   - ./requirements/nginx/conf:/etc/nginx/conf.d
     ports:
       - "80:80"
     networks:
@@ -28,6 +29,8 @@ services:
       - wordpress_net
     depends_on:
       - mariadb
+    env_file:
+      - .env
     restart: always
 
   mariadb:

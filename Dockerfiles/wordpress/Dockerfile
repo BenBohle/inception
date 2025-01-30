@@ -2,14 +2,14 @@ FROM debian:bullseye
 
 # Install necessary packages
 RUN apt-get update && apt-get install -y \
-    php-fpm \
-    php-mysql \
+	php7.4-fpm \
+    php7.4-mysql \
     curl \
     tar \
     && apt-get clean
 
 # Create the necessary directories
-RUN mkdir -p /var/www/html /run/php
+RUN mkdir -p /var/www/html /run/php /var/log/php-fpm
 
 # Download and extract WordPress
 RUN curl -o /tmp/latest.tar.gz https://wordpress.org/latest.tar.gz \
@@ -17,11 +17,12 @@ RUN curl -o /tmp/latest.tar.gz https://wordpress.org/latest.tar.gz \
     && chown -R www-data:www-data /var/www/html \
     && rm /tmp/latest.tar.gz
 
-# Set working directory
-WORKDIR /var/www/html
-
 # Copy PHP configuration
 COPY conf/php.ini /etc/php/7.4/fpm/php.ini
+COPY conf/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
+COPY conf/www.conf /etc/php/7.4/fpm/pool.d/.
+
+WORKDIR /var/www/html
 
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
