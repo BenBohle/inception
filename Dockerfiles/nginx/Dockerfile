@@ -1,20 +1,29 @@
 FROM debian:bullseye
 
-# Installiere NGINX und andere notwendige Pakete
+# Installiere NGINX und OpenSSL
 RUN apt-get update && apt-get install -y \
     nginx \
-    && apt-get clean
+    openssl \
+    gettext-base \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Kopiere die NGINX-Konfiguration
-RUN rm /etc/nginx/sites-enabled/default
-COPY conf/wordpress.conf /etc/nginx/conf.d/
+# SSL-Zertifikate generieren
+RUN mkdir -p /etc/nginx/ssl && \
+    openssl req -x509 -newkey rsa:4096 -keyout /etc/nginx/ssl/${DOMAIN_NAME}-key.pem \
+    -out /etc/nginx/ssl/${DOMAIN_NAME}-cert.pem -days 365 -nodes \
+    -subj "/CN=${DOMAIN_NAME}"
 
-# Kopiere SSL-Zertifikate (optional)
-# COPY conf/cert.pem /etc/ssl/certs/cert.pem
-# COPY conf/key.pem /etc/ssl/private/key.pem
 
-# Exponiere den Standardport für NGINX
-EXPOSE 80
+# Entferne Standard-NGINX-Site und füge eigene hinzu
+RUN rm -f /etc/nginx/sites-enabled/default
+COPY conf/wordpress.conf.template /etc/nginx/
+COPY conf/gcert.sh /usr/local/bin/gcert.sh
 
-# Start NGINX
-CMD ["nginx", "-g", "daemon off;"]
+# Setze Berechtigungen für das Skript
+RUN chmod +x /usr/local/bin/gcert.sh
+
+# Exponiere Ports
+EXPOSE 80 443
+
+# Startet das Zertifikatsskript und NGINX
+ENTRYPOINT [ "/usr/local/bin/gcert.sh" ]
