@@ -23,7 +23,7 @@ COPY conf/gcert.sh /usr/local/bin/gcert.sh
 RUN chmod +x /usr/local/bin/gcert.sh
 
 # Exponiere Ports
-EXPOSE 80 443
+EXPOSE 443
 
 # Startet das Zertifikatsskript und NGINX
 ENTRYPOINT [ "/usr/local/bin/gcert.sh" ]

@@ -1,11 +1,36 @@
 #!/bin/bash
 set -e
 
+
+
+export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
+export MYSQL_USER=$(cat /run/secrets/wp_db_user)
+export MYSQL_PASSWORD=$(cat /run/secrets/wp_db_password)
+
 # Überprüfen, ob notwendige Umgebungsvariablen gesetzt sind
-if [[ -z "${WP_DB_NAME}" || -z "${WP_DB_USER}" || -z "${WP_DB_PASSWORD}" ]]; then
-  echo "Fehler: WP_DB_NAME, WP_DB_USER oder WP_DB_PASSWORD sind nicht gesetzt!"
+if [[ -z "${WP_DB_NAME}" ]]; then
+  echo "Fehler: WP_DB_NAME ist nicht gesetzt!"
   exit 1
 fi
+
+if [[ -z "${MYSQL_USER}" ]]; then
+  echo "user: " ${MYSQL_USER}
+  echo "user: " $MYSQL_USER
+  echo "Fehler: MYSQL_USER ist nicht gesetzt!"
+  exit 1
+fi
+
+if [[ -z "${MYSQL_PASSWORD}" ]]; then
+  echo ${MYSQL_PASSWORD}
+  echo "Fehler: MYSQL_PASSWORD istd nicht gesetzt!"
+  exit 1
+fi
+
+
+
+echo ${WP_DB_NAME}
+echo "user: " ${MYSQL_USER}
+echo "user: " $MYSQL_USER
 
 # MariaDB Datenverzeichnis initialisieren, falls es nicht existiert
 if [ ! -d "/var/lib/mysql/mysql" ]; then
@@ -37,8 +62,8 @@ fi
 echo "Erstelle Datenbank und Benutzer..."
 mysql -u root <<-EOSQL
     CREATE DATABASE IF NOT EXISTS \`${WP_DB_NAME}\`;
-    CREATE USER IF NOT EXISTS '${WP_DB_USER}'@'%' IDENTIFIED BY '${WP_DB_PASSWORD}';
-    GRANT ALL PRIVILEGES ON ${WP_DB_NAME}.* TO '${WP_DB_USER}'@'%';
+    CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+    GRANT ALL PRIVILEGES ON ${WP_DB_NAME}.* TO '${MYSQL_USER}'@'%';
     FLUSH PRIVILEGES;
 
 EOSQL

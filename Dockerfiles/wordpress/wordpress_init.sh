@@ -10,11 +10,16 @@ until nc -z "${WORDPRESS_DB_HOST}" 3306; do
   sleep 3
 done
 
+export WORDPRESS_DB_USER=$(cat /run/secrets/wp_db_user)
+export WORDPRESS_DB_PASSWORD=$(cat /run/secrets/wp_db_password)
+export WORDPRESS_ADMIN_USER=$(cat /run/secrets/wp_admin)
+export WORDPRESS_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
+export WORDPRESS_ADMIN_EMAIL=$(cat /run/secrets/wp_admin_email)
 # echo "Datenbank ist bereit!"
 
 if [ ! -f /var/www/html/wp-config.php ]; then
   echo "Erstelle wp-config.php..."
-  wp config create --dbname="wordpress_db" --dbuser="myuser" --dbpass="mysecretpassword" --dbhost="mariadb" --allow-root
+  wp config create --dbname="${WORDPRESS_DB_NAME}" --dbuser="${WORDPRESS_DB_USER}" --dbpass="${WORDPRESS_DB_PASSWORD}" --dbhost="${WP_DB_HOST}" --allow-root
 
 
 # WordPress installieren, falls es noch nicht installiert ist

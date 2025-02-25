@@ -14,3 +14,6 @@ up:
 
 down:
 	$(DOCKER_COMPOSE) down
+
+rmvol:
+	$(DOCKER_COMPOSE) down -v

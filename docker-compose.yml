@@ -24,18 +24,24 @@ services:
     environment:
       WORDPRESS_DB_HOST: ${WP_DB_HOST}
       WORDPRESS_DB_NAME: ${WP_DB_NAME}
-      WORDPRESS_DB_USER: ${WP_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
+      WORDPRESS_DB_USER_: /run/secrets/wp_db_user
+      WORDPRESS_DB_PASSWORD: /run/secrets/wp_db_password
       DOMAIN_NAME: ${DOMAIN_NAME}
-      WORDPRESS_ADMIN_USER: admin
-      WORDPRESS_ADMIN_PASSWORD: adminpassword
-      WORDPRESS_ADMIN_EMAIL: admin@example.com
+      WORDPRESS_ADMIN_USER: /run/secrets/wp_admin
+      WORDPRESS_ADMIN_PASSWORD: /run/secrets/wp_admin_password
+      WORDPRESS_ADMIN_EMAIL: /run/secrets/wp_admin_email
     volumes:
       - wordpress_data:/var/www/html
     networks:
       - wordpress_net
     depends_on:
       - mariadb
+    secrets:
+      - wp_db_user
+      - wp_db_password
+      - wp_admin_email
+      - wp_admin
+      - wp_admin_password
     env_file:
       - .env
     restart: always
@@ -44,9 +50,6 @@ services:
     build:
       context: ./Dockerfiles/mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${WP_DB_NAME}
     volumes:
       - mariadb_data:/var/lib/mysql
@@ -54,7 +57,25 @@ services:
       - .env
     networks:
       - wordpress_net
+    secrets:
+      - wp_db_user
+      - wp_db_password
+      - db_root_password
     restart: always
+
+secrets:
+  wp_db_user:
+    file: secrets/wp_db_user.txt
+  wp_db_password:
+    file: secrets/wp_db_user.txt
+  db_root_password:
+    file: secrets/db_root_password.txt
+  wp_admin_email:
+    file: secrets/wp_admin_email.txt
+  wp_admin:
+    file: secrets/wp_admin.txt
+  wp_admin_password:
+    file: secrets/wp_admin_password.txt
 
 volumes:
   wordpress_data:
