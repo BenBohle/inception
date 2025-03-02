@@ -31,10 +31,6 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 # Setze Permalinks
 wp rewrite structure '/%postname%/' --allow-root
 
-# Installiere und aktiviere Standard-Theme & Plugins
-wp theme install twentytwentyone --activate --allow-root
-# wp plugin install --activate --allow-root
-
 echo "WordPress-Installation abgeschlossen."
 fi
 
