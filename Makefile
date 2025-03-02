@@ -1,5 +1,5 @@
 # Variablen
-DOCKER_COMPOSE = sudo docker compose
+DOCKER_COMPOSE = docker compose
 
 .PHONY: build up down
 

@@ -15,6 +15,9 @@ export WORDPRESS_DB_PASSWORD=$(cat /run/secrets/wp_db_password)
 export WORDPRESS_ADMIN_USER=$(cat /run/secrets/wp_admin)
 export WORDPRESS_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
 export WORDPRESS_ADMIN_EMAIL=$(cat /run/secrets/wp_admin_email)
+export WORDPRESS_USER=$(cat /run/secrets/wp_user)
+export WORDPRESS_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
+export WORDPRESS_USER_EMAIL=$(cat /run/secrets/wp_user_email)
 # echo "Datenbank ist bereit!"
 
 if [ ! -f /var/www/html/wp-config.php ]; then
@@ -34,6 +37,10 @@ wp option update siteurl "https://${DOMAIN_NAME}" --allow-root
 
 # Setze Permalinks
 wp rewrite structure '/%postname%/' --allow-root
+
+echo "Erstelle normalen Benutzer..."
+wp user create "${WORDPRESS_USER}" "${WORDPRESS_USER_EMAIL}" --user_pass="${WORDPRESS_USER_PASSWORD}" --role=subscriber --allow-root
+echo "Normaler Benutzer erstellt."
 
 echo "WordPress-Installation abgeschlossen."
 fi
