@@ -39,7 +39,7 @@ wp option update siteurl "https://${DOMAIN_NAME}" --allow-root
 wp rewrite structure '/%postname%/' --allow-root
 
 echo "Erstelle normalen Benutzer..."
-wp user create "${WORDPRESS_USER}" "${WORDPRESS_USER_EMAIL}" --user_pass="${WORDPRESS_USER_PASSWORD}" --role=subscriber --allow-root
+wp user create "${WORDPRESS_USER}" "${WORDPRESS_USER_EMAIL}" --user_pass="${WORDPRESS_USER_PASSWORD}" --role=contributor --allow-root
 echo "Normaler Benutzer erstellt."
 
 echo "WordPress-Installation abgeschlossen."
