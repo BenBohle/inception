@@ -91,7 +91,17 @@ secrets:
 
 volumes:
   wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/bbohle/data/wordpress
+      o: bind
   mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/bbohle/data/mariadb
+      o: bind
 
 networks:
   wordpress_net:
