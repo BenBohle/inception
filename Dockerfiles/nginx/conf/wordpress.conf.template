@@ -1,11 +1,24 @@
+server {
+    listen 80;
+    server_name ${DOMAIN_NAME};
 
+    # Redirect HTTP to HTTPS
+    location / {
+        return 301 https://${DOMAIN_NAME}$request_uri;
+    }
+}
 
 server {
-    listen 443;
+    listen 443 ssl;
     server_name ${DOMAIN_NAME};
 
     # SSL-Konfiguration für selbstsignierte Zertifikate
-   
+    ssl_certificate /etc/nginx/ssl/${DOMAIN_NAME}-cert.pem;
+    ssl_certificate_key /etc/nginx/ssl/${DOMAIN_NAME}-key.pem;
+    
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
 
     root /var/www/html;
     index index.php index.html index.htm;
