@@ -64,10 +64,12 @@ mysql -u root <<-EOSQL
     CREATE DATABASE IF NOT EXISTS \`${WP_DB_NAME}\`;
     CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
     GRANT ALL PRIVILEGES ON ${WP_DB_NAME}.* TO '${MYSQL_USER}'@'%';
-	ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
     FLUSH PRIVILEGES;
 
 EOSQL
+
+mysqladmin -u root password "${MYSQL_ROOT_PASSWORD}"
+
 
 # Wartezeit, um sicherzustellen, dass Änderungen übernommen wurden
 sleep 3

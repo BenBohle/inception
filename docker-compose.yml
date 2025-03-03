@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+  container_name: nginx
   nginx:
     build:
       context: ./Dockerfiles/nginx
@@ -19,6 +20,7 @@ services:
     entrypoint: ["/bin/bash", "-c", "/usr/local/bin/gcert.sh && nginx -g 'daemon off;'"]
 
   wordpress:
+    container_name: wordpress
     build:
       context: ./Dockerfiles/wordpress
     environment:
@@ -53,6 +55,7 @@ services:
     restart: always
 
   mariadb:
+    container_name: mariadb
     build:
       context: ./Dockerfiles/mariadb
     environment:
